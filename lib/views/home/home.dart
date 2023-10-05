@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:ksr_store_app/bloc/HomeCubit/home_cubit.dart';
+import 'package:ksr_store_app/res/constant.dart';
 import 'package:ksr_store_app/views/home/widgets/filter.dart';
 import 'package:ksr_store_app/views/home/widgets/myHomeDrawer.dart';
 import 'package:lottie/lottie.dart';
@@ -44,13 +45,22 @@ class _HomePageState extends State<HomePage>
   Widget build(BuildContext context) {
     return Scaffold(
       key: _scafoldKey,
-      appBar: myAppBar(context),
-      drawer: const MyDrawer(),
-      body: FadeTransition(
+      body: CustomScrollView(
+        slivers: [
+          myAppBar(context),
+          body(),
+        ],
+      ),
+    );
+  }
+
+  Widget body() {
+    return SliverToBoxAdapter(
+      child: FadeTransition(
         opacity: _myFadeAnimation,
         child: Column(
+          mainAxisSize: MainAxisSize.min,
           children: [
-            const FiltterProducts(),
             const AllCategories(),
             BlocListener<CartCubit, CartState>(
               listener: (context, state) {
@@ -64,11 +74,8 @@ class _HomePageState extends State<HomePage>
               child: BlocBuilder<HomeCubit, HomeState>(
                 builder: (context, state) {
                   if (state is LoadingState) {
-                    return Expanded(
-                      child: Center(
-                          child:
-                              Lottie.asset('assets/animations/loading.json')),
-                    );
+                    return Center(
+                        child: Lottie.asset('assets/animations/loading.json'));
                   }
                   return const ProductsList();
                 },
@@ -80,26 +87,35 @@ class _HomePageState extends State<HomePage>
     );
   }
 
-  AppBar myAppBar(BuildContext context) {
-    return AppBar(
-      leading: IconButton(
-          onPressed: () {
-            _scafoldKey.currentState?.openDrawer();
-          },
-          icon: const Icon(FontAwesomeIcons.barsStaggered)),
-      title: Text(
-        'Ksr\nStore',
-        textAlign: TextAlign.center,
-        style: Theme.of(context)
-            .textTheme
-            .headlineSmall
-            ?.copyWith(fontWeight: FontWeight.w500),
-      ),
-      centerTitle: true,
-      actions: [
-        IconButton(
-            onPressed: () {}, icon: const Icon(FontAwesomeIcons.searchengin))
-      ],
-    );
+  Widget myAppBar(BuildContext context) {
+    return SliverAppBar(
+        expandedHeight: MediaQuery.of(context).size.height * .1,
+        leading: IconButton(
+            onPressed: () {
+              _scafoldKey.currentState?.openDrawer();
+            },
+            icon: const Icon(FontAwesomeIcons.barsStaggered)),
+        title: Text(
+          'Ksr\nStore',
+          textAlign: TextAlign.center,
+          style: Theme.of(context)
+              .textTheme
+              .headlineSmall
+              ?.copyWith(fontWeight: FontWeight.w500),
+        ),
+        centerTitle: true,
+        actions: [
+          IconButton(
+              onPressed: () {}, icon: const Icon(FontAwesomeIcons.searchengin))
+        ],
+        flexibleSpace: FlexibleSpaceBar(
+          background: Container(
+            alignment: Alignment.bottomCenter,
+            child: const Column(mainAxisSize: MainAxisSize.min, children: [
+              FiltterProducts(),
+              // SizedBox(height: kSmallPM),
+            ]),
+          ),
+        ));
   }
 }

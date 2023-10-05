@@ -9,15 +9,15 @@ class ProductsList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Expanded(
-      child: GridView.builder(
-        padding: const EdgeInsets.all(kSmallPM),
-        itemCount: context.read<HomeCubit>().myProducts.length,
-        gridDelegate:
-            const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
-        itemBuilder: (context, index) =>
-            SingleProducts(context.read<HomeCubit>().myProducts[index]),
-      ),
+    return GridView.builder(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      padding: const EdgeInsets.all(kSmallPM),
+      itemCount: context.read<HomeCubit>().myProducts.length,
+      gridDelegate:
+          const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
+      itemBuilder: (context, index) =>
+          SingleProducts(context.read<HomeCubit>().myProducts[index]),
     );
   }
 }
